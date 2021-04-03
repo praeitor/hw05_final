@@ -1,3 +1,4 @@
+from django import forms
 from django.forms import ModelForm, widgets
 from django.utils.translation import gettext_lazy as _
 
@@ -20,10 +21,7 @@ class PostForm(ModelForm):
 class CommentForm(ModelForm):
     class Meta:
         model = Comment
-        fields = ('post', 'author', 'text')
-        labels = {
-            'text': _('Текст')
-        }
-        help_texts = {
-            'text': _('Текст поста который планируется к публикации')
+        fields = ('text',)
+        widgets = {
+            "text": forms.Textarea(attrs={"cols": 50, "rows": 10})
         }

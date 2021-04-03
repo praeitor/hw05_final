@@ -63,6 +63,7 @@ class Group(models.Model):
     class Meta:
         verbose_name = 'Описание группы'
 
+
 class Comment(models.Model):
     post = models.ForeignKey(
         'Post',
@@ -84,7 +85,23 @@ class Comment(models.Model):
     )
 
     def __str__(self):
-        return self.post
+        return self.text
 
     class Meta:
-        verbose_name = 'Комментарий'
+        ordering = ('-created',)
+
+
+class Folllows(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='following'
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='following'
+    )
+
+    def __str__(self):
+        return self.user, self.author

@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls.base import reverse
+from django.views.decorators.cache import cache_page
 
 
 from posts.models import Post, Group
@@ -11,6 +12,7 @@ from posts.forms import PostForm, CommentForm
 User = get_user_model()
 
 
+@cache_page(20)
 def index(request):
     latest = Post.objects.all()[:10]
     posts = Post.objects.all()
@@ -66,12 +68,30 @@ def post_view(request, username, post_id):
     post = Post.objects.get(pk=post_id)
     profile = get_object_or_404(User, username=username)
     form = CommentForm()
+    comments = post.comments.all()
     context = {
         'profile': profile,
         'post': post,
         'form': form,
+        'comments': comments,
     }
     return render(request, 'post.html', context)
+
+
+@login_required
+def add_comment(request, username, post_id):
+    post = get_object_or_404(Post, pk=post_id, author__username=username)
+    form = CommentForm(request.POST or None)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.author = request.user
+        comment.post = post
+        form.save()
+    return redirect(
+        'post',
+        username=username,
+        post_id=post_id
+    )
 
 
 @login_required
