@@ -25,3 +25,4 @@ EDIT_URL = reverse(
     kwargs={'username': AUTHOR, 'post_id': POST_ID}
 )
 PROFILE_URL = reverse('profile', args=[AUTHOR])
+PROFILE_URL2 = reverse('profile', args=[AUTHOR2])

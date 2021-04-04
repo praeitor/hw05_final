@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 
 from posts.forms import PostForm
-from posts.models import Group, Post
+from posts.models import Group, Post, Follow
 
 from. import constants as c
 
@@ -60,8 +60,25 @@ class PostsCreateFormTests(TestCase):
             data=form_data,
             follow=True
         )
-        self.assertEqual(Post.objects.count(), posts_count == posts_count)
         self.assertTrue(Post.objects.filter(
             text='Запись после редактирования').exists()
         )
         self.assertRedirects(response, c.POST_URL)
+        self.assertEqual(Post.objects.count(), posts_count)
+
+    def test_follow_and_unfollow_auth_to_author(self):
+        '''Тест подписки зарегистрированного пользователя'''
+        follows_count = Follow.objects.count()
+        User.objects.create(username=c.AUTHOR2)
+        response_follow = self.authorized_client.get(
+            '/second_user/follow/',
+            follow=True,
+        )
+        self.assertRedirects(response_follow, c.PROFILE_URL2)
+        self.assertEqual(Follow.objects.count(), follows_count + 1)
+        response_unfollow = self.authorized_client.get(
+            '/second_user/unfollow/',
+            follow=True,
+        )
+        self.assertRedirects(response_unfollow, c.PROFILE_URL2)
+        self.assertEqual(Follow.objects.count(), follows_count)
