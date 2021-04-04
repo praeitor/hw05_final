@@ -54,7 +54,7 @@ class PostsCreateFormTests(TestCase):
         form_data = {
             'text': 'Тестовый коментарий',
         }
-        response = self.authorized_client.post(
+        self.authorized_client.post(
             c.COMMENT_URL,
             data=form_data,
             follow=True
