@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.test import TestCase, Client
 
 from ..models import Post, Group
@@ -19,7 +20,7 @@ class PostsURLTests(TestCase):
             author=tuser,
         )
         Post.objects.create(
-            text='пост другого автора',
+            text=c.POST_TEXT2,
             pub_date=c.POST_PUBDATE,
             author=auser,
         )
@@ -98,3 +99,11 @@ class PostsURLTests(TestCase):
             '/second_user/2/edit/', follow=True)
         self.assertRedirects(
             response, '/second_user/2/')
+
+    def test_index_cache(self):
+        '''Тестирование кэша в шаблоне'''
+        cache_before = self.authorized_client.post(c.INDEX_URL).templates
+        cache.clear()
+        cache_after = self.authorized_client.post(c.INDEX_URL).templates
+        self.assertNotEqual(cache_before, cache_after)
+        print('before ',cache_before,'after ',cache_after)
