@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
+from django.http import response
 from django.test import Client, TestCase
 
 from posts.forms import PostForm
-from posts.models import Group, Post, Follow
+from posts.models import Comment, Group, Post, Follow
 
 from. import constants as c
 
@@ -47,6 +48,22 @@ class PostsCreateFormTests(TestCase):
         self.assertRedirects(response, c.INDEX_URL)
         self.assertEqual(Post.objects.count(), posts_count + 1)
         self.assertTrue(Post.objects.filter(text='Тестовый тест 2').exists())
+
+    def test_create_comment_auth(self):
+        '''Тест создания комментария авторизированным пользователем'''
+        comments_count = Comment.objects.count()
+        form_data = {
+            'text': 'Тестовый коментарий',
+        }
+        response = self.authorized_client.post(
+            c.COMMENT_URL,
+            data=form_data,
+            follow=True
+        )
+        self.assertEqual(Comment.objects.count(), comments_count + 1)
+        self.assertTrue(
+            Comment.objects.filter(text='Тестовый коментарий').exists()
+        )
 
     def test_edit_post(self):
         '''Тест редактирования существующего поста и корректность данных'''

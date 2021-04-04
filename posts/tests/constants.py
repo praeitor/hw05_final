@@ -24,5 +24,8 @@ EDIT_URL = reverse(
     'post_edit',
     kwargs={'username': AUTHOR, 'post_id': POST_ID}
 )
+COMMENT_URL = reverse(
+    'add_comment',
+    kwargs={'username': AUTHOR, 'post_id': POST_ID})
 PROFILE_URL = reverse('profile', args=[AUTHOR])
 PROFILE_URL2 = reverse('profile', args=[AUTHOR2])

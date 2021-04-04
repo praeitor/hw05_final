@@ -51,6 +51,13 @@ def new_post(request):
 def profile(request, username):
     profile = get_object_or_404(User, username=username)
     posts = Post.objects.filter(author=profile)
+    if request.user.is_authenticated:
+        following = Follow.objects.filter(
+            user=request.user,
+            author__username=username
+        ).exists()
+    else:
+        following = False
     paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -58,6 +65,7 @@ def profile(request, username):
         'profile': profile,
         'posts': posts,
         'page': page,
+        'following': following,
     }
     return render(request, 'profile.html', context)
 
