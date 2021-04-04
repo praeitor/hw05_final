@@ -1,6 +1,7 @@
 from textwrap import shorten
 
 from django.db import models
+from django.db.models import UniqueConstraint
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -105,3 +106,9 @@ class Follow(models.Model):
 
     def __str__(self):
         return self.user, self.author
+
+    class Meta:
+        UniqueConstraint(
+            fields=['user', 'author'],
+            name='unique fields user and author'
+        )
