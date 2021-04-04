@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
+from django.urls import reverse
 
 from posts.forms import PostForm
 from posts.models import Comment, Group, Post, Follow
@@ -32,7 +33,7 @@ class PostsCreateFormTests(TestCase):
         )
         cls.form = PostForm()
 
-    def test_create_post(self):
+    def test_create_post_auth(self):
         '''Тест создания нового поста и проверки корректности ввода данных'''
         posts_count = Post.objects.count()
         form_data = {
@@ -64,37 +65,57 @@ class PostsCreateFormTests(TestCase):
             Comment.objects.filter(text='Тестовый коментарий').exists()
         )
 
-    def test_edit_post(self):
-        '''Тест редактирования существующего поста и корректность данных'''
-        posts_count = Post.objects.count()
-        form_data = {
-            'text': 'Запись после редактирования',
-            'group': self.group.id,
+    def test_edit_post(self): 
+        '''Тест редактирования существующего поста и корректность данных''' 
+        posts_count = Post.objects.count() 
+        form_data = { 
+            'text': 'Запись после редактирования', 
+            'group': self.group.id, 
+        } 
+        response = self.authorized_client.post( 
+            '/user_test/1/edit/', 
+            data=form_data, 
+            follow=True 
+        ) 
+        self.assertTrue(Post.objects.filter( 
+            text='Запись после редактирования').exists() 
+        ) 
+        self.assertRedirects(response, c.POST_URL) 
+        self.assertEqual(Post.objects.count(), posts_count) 
+ 
+    def test_follow_and_unfollow_auth_to_author(self): 
+        '''Тест подписки зарегистрированного пользователя''' 
+        follows_count = Follow.objects.count() 
+        second_user = User.objects.create(username=c.AUTHOR2) 
+        response_follow = self.authorized_client.get( 
+            '/second_user/follow/', 
+            follow=True, 
+        )
+        second_user_client = Client()
+        second_user_client.force_login(second_user)
+        form_data = { 
+            'text': 'Пост пользователя на которого я подписан', 
         }
-        response = self.authorized_client.post(
-            '/user_test/1/edit/',
-            data=form_data,
-            follow=True
+        second_user_client.post( 
+            '/new/', 
+            data=form_data, 
+            follow=True 
+        ) 
+        response_first = self.authorized_client.get(reverse('follow_index'))
+        self.assertEquals(
+            response_first.context['posts'].first().text,
+            'Пост пользователя на которого я подписан'
         )
-        self.assertTrue(Post.objects.filter(
-            text='Запись после редактирования').exists()
+        self.assertRedirects(response_follow, c.PROFILE_URL2) 
+        self.assertEqual(Follow.objects.count(), follows_count + 1) 
+        response_unfollow = self.authorized_client.get( 
+            '/second_user/unfollow/', 
+            follow=True, 
         )
-        self.assertRedirects(response, c.POST_URL)
-        self.assertEqual(Post.objects.count(), posts_count)
-
-    def test_follow_and_unfollow_auth_to_author(self):
-        '''Тест подписки зарегистрированного пользователя'''
-        follows_count = Follow.objects.count()
-        User.objects.create(username=c.AUTHOR2)
-        response_follow = self.authorized_client.get(
-            '/second_user/follow/',
-            follow=True,
+        self.assertEquals(
+            response_first.context['posts'].first(),
+            None
         )
-        self.assertRedirects(response_follow, c.PROFILE_URL2)
-        self.assertEqual(Follow.objects.count(), follows_count + 1)
-        response_unfollow = self.authorized_client.get(
-            '/second_user/unfollow/',
-            follow=True,
-        )
-        self.assertRedirects(response_unfollow, c.PROFILE_URL2)
-        self.assertEqual(Follow.objects.count(), follows_count)
+        self.assertRedirects(response_unfollow, c.PROFILE_URL2) 
+        self.assertEqual(Follow.objects.count(), follows_count) 
+ 

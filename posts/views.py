@@ -132,6 +132,7 @@ def follow_index(request):
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     context = {
+        'posts': posts,
         'page': page,
         'paginator': paginator,
     }
