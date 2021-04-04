@@ -117,3 +117,21 @@ class PostsViewsTests(TestCase):
         self.assertEqual(str(profile_username), c.AUTHOR)
         self.assertEqual(post_text, c.POST_TEXT)
         self.assertEqual(post_image, c.POST_IMAGE)
+
+    def test_comments_only_for_auth(self):
+        '''Только авторизированный пользователь может комментировать посты'''
+        pass
+
+    def test_follow_for_auth(self):
+        '''Проверка подписки для авторизованного пользователя'''
+        pass
+
+    def test_unfollow_for_auth(self):
+        '''Проверка отписки для авторизованного пользователя'''
+        pass
+
+    def test_record_only_for_auth(self):
+        '''Проверка появления записи у тех кто подписан и отсутствия записи 
+        у неподписанных
+        '''
+        pass

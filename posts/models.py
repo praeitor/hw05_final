@@ -31,7 +31,7 @@ class Post(models.Model):
         upload_to='posts/',
         blank=True,
         null=True
-    )  
+    )
 
     def __str__(self):
         text = (
@@ -91,11 +91,11 @@ class Comment(models.Model):
         ordering = ('-created',)
 
 
-class Folllows(models.Model):
+class Follow(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='following'
+        related_name='follower'
     )
     author = models.ForeignKey(
         User,

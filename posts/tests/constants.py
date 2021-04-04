@@ -7,6 +7,11 @@ POST_PUBDATE = '06.01.2021'
 POST_ID = '1'
 POST_IMAGE = 'posts/hw.jpg'
 
+AUTHOR2 = 'second_user'
+POST_TEXT2 = "Второй текст"
+POST_PUBDATE2 = '10.01.2021'
+POST_ID2 = '2'
+
 GROUP_TITLE = 'Тестовый заголовок'
 GROUP_SLUG = 'test-slug'
 GROUP_DESC = 'Описание тестовой группы'

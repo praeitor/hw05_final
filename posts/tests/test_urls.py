@@ -12,7 +12,7 @@ class PostsURLTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         tuser = User.objects.create(username=c.AUTHOR)
-        auser = User.objects.create(username='second_user')
+        auser = User.objects.create(username=c.AUTHOR2)
         Post.objects.create(
             text=c.POST_TEXT,
             pub_date=c.POST_PUBDATE,
@@ -79,12 +79,18 @@ class PostsURLTests(TestCase):
                 response = self.guest_client.get(url_path)
                 self.assertTemplateUsed(response, template)
 
-    def test_url_redirect_anonymous_edit_to_login(self):
-        '''Корректный редирект анонима со страницы edit.'''
-        response = self.guest_client.get(
-            '/user_test/1/edit/', follow=True)
-        self.assertRedirects(
-            response, '/auth/login/?next=/user_test/1/edit/')
+    def test_urls_redirect_anonymous(self):
+        '''Проверка корректности редиректов для анонимных пользователей'''
+        req_to_redir_names = {
+            '/user_test/1/comment/': '/auth/login/?next=/user_test/1/comment/',
+            '/user_test/1/edit/': '/auth/login/?next=/user_test/1/edit/',
+            '/user_test/follow/': '/auth/login/?next=/user_test/follow/',
+            '/user_test/unfollow/': '/auth/login/?next=/user_test/unfollow/',
+        }
+        for req, redir in req_to_redir_names.items():
+            with self.subTest():
+                response = self.guest_client.get(req, follow=True)
+                self.assertRedirects(response, redir)
 
     def test_url_redirect_anonymous_edit_to_postview(self):
         '''Корректный аторизованного (не автора) со страницы edit.'''

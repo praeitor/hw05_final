@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import ModelForm, widgets
+from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 
 from posts.models import Post, Comment
@@ -17,6 +17,7 @@ class PostForm(ModelForm):
             'group': _('Имя группы'),
             'text': _('Текст поста который планируется к публикации')
         }
+
 
 class CommentForm(ModelForm):
     class Meta:
