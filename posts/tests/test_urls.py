@@ -106,4 +106,3 @@ class PostsURLTests(TestCase):
         cache.clear()
         cache_after = self.authorized_client.post(c.INDEX_URL).templates
         self.assertNotEqual(cache_before, cache_after)
-        print('before ',cache_before,'after ',cache_after)
