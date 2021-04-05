@@ -7,6 +7,8 @@ from django.urls.base import reverse
 
 from posts.models import Post, Group, Follow
 from posts.forms import PostForm, CommentForm
+from yatube.settings import POSTS_ON_PAGE
+
 
 User = get_user_model()
 
@@ -14,7 +16,7 @@ User = get_user_model()
 def index(request):
     latest = Post.objects.all()[:10]
     posts = Post.objects.all()
-    paginator = Paginator(posts, 10)
+    paginator = Paginator(posts, POSTS_ON_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(
@@ -27,7 +29,7 @@ def index(request):
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     posts = Post.objects.filter(group=group)
-    paginator = Paginator(posts, 10)
+    paginator = Paginator(posts, POSTS_ON_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(
@@ -54,18 +56,22 @@ def profile(request, username):
     if request.user.is_authenticated:
         following = Follow.objects.filter(
             user=request.user,
-            author__username=username
+            author__username=username,
         ).exists()
     else:
         following = False
-    paginator = Paginator(posts, 10)
+    paginator = Paginator(posts, POSTS_ON_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
+    following_count = Follow.objects.filter(user=request.user).count()
+    followers_count = Follow.objects.filter(author=request.user).count()
     context = {
         'profile': profile,
         'posts': posts,
         'page': page,
         'following': following,
+        'following_count': following_count,
+        'followers_count': followers_count,
     }
     return render(request, 'profile.html', context)
 
@@ -128,7 +134,7 @@ def post_edit(request, username, post_id):
 @login_required
 def follow_index(request):
     posts = Post.objects.filter(author__following__user=request.user)
-    paginator = Paginator(posts, 10)
+    paginator = Paginator(posts, POSTS_ON_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     context = {

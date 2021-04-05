@@ -4,12 +4,10 @@
 
 <main role="main" class="container">
         <div class="row">
-                {% include "block_author.html" %}
+                {% include "include/block_author.html" %}
                 <div class="col-md-9">
-                        <!-- Пост -->  
-                        {% include "post_item.html" with post=post %}
-                        {% include "comments.html" with post=post %}        
-
+                        {% include "include/post_item.html" with post=post %}
+                        {% include "include/comments.html" with post=post %}        
                 </div>
         </div>
 </main>

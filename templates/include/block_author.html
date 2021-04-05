@@ -2,24 +2,21 @@
                         <div class="card">
                                 <div class="card-body">
                                         <div class="h2">
-                                                <!-- Имя автора DONE-->
                                                 {{ profile.get_full_name }}
                                         </div>
                                         <div class="h3 text-muted">
-                                                <!-- username автора DONE -->
                                                 {{ profile }}
                                         </div>
                                 </div>
                                 <ul class="list-group list-group-flush">
                                         <li class="list-group-item">
                                                 <div class="h6 text-muted">
-                                                        Подписчиков: XXX <br />
-                                                        Подписан: XXX
+                                                        Подписчиков: {{ following_count }}<br />
+                                                        Подписан: {{ followers_count }}
                                                 </div>
                                         </li>
                                         <li class="list-group-item">
                                                 <div class="h6 text-muted">
-                                                        <!-- Количество записей DONE-->
                                                         Записей: {{ profile.posts.count }}
                                                 </div>
                                         </li>
