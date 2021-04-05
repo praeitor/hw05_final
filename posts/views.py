@@ -60,18 +60,18 @@ def profile(request, username):
         ).exists()
     else:
         following = False
+    following_count = Follow.objects.filter(user=request.user).count()
+    followers_count = Follow.objects.filter(author=request.user).count()
     paginator = Paginator(posts, POSTS_ON_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    following_count = Follow.objects.filter(user=request.user).count()
-    followers_count = Follow.objects.filter(author=request.user).count()
     context = {
         'profile': profile,
         'posts': posts,
         'page': page,
         'following': following,
         'following_count': following_count,
-        'followers_count': followers_count,
+        'followers_count': followers_count
     }
     return render(request, 'profile.html', context)
 
