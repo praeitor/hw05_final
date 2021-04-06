@@ -34,9 +34,9 @@ PROFILE_URL = reverse('profile', args=[AUTHOR])
 PROFILE_URL2 = reverse('profile', args=[AUTHOR2])
 FOLLOW2 = reverse(
     'profile_follow',
-    args = [AUTHOR2]
+    args=[AUTHOR2]
 )
 UNFOLLOW2 = reverse(
     'profile_unfollow',
-    args = [AUTHOR2]
+    args=[AUTHOR2]
 )
