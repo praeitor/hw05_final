@@ -19,6 +19,7 @@ GROUP_SLUG = 'test-slug'
 GROUP_DESC = 'Описание тестовой группы'
 
 INDEX_URL = reverse('index')
+FOLLOW_URL = reverse('follow_index')
 NEW_URL = reverse('new_post')
 GROUP_URL = reverse('group', kwargs={'slug': GROUP_SLUG})
 POST_URL = reverse('post', kwargs={'username': AUTHOR, 'post_id': POST_ID})
@@ -31,3 +32,11 @@ COMMENT_URL = reverse(
     kwargs={'username': AUTHOR, 'post_id': POST_ID})
 PROFILE_URL = reverse('profile', args=[AUTHOR])
 PROFILE_URL2 = reverse('profile', args=[AUTHOR2])
+FOLLOW2 = reverse(
+    'profile_follow',
+    args = [AUTHOR2]
+)
+UNFOLLOW2 = reverse(
+    'profile_unfollow',
+    args = [AUTHOR2]
+)

@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
-from django.urls import reverse
 
 from posts.forms import PostForm
 from posts.models import Comment, Group, Post, Follow
@@ -73,9 +72,9 @@ class PostsCreateFormTests(TestCase):
             'group': self.group.id,
         }
         response = self.authorized_client.post(
-            '/user_test/1/edit/',
+            c.EDIT_URL,
             data=form_data,
-            follow=True
+            follow=True,
         )
         self.assertTrue(Post.objects.filter(
             text='Запись после редактирования').exists()
@@ -88,7 +87,7 @@ class PostsCreateFormTests(TestCase):
         follows_count = Follow.objects.count()
         second_user = User.objects.create(username=c.AUTHOR2)
         response_follow = self.authorized_client.get(
-            '/second_user/follow/',
+            c.FOLLOW2,
             follow=True,
         )
         second_user_client = Client()
@@ -97,11 +96,11 @@ class PostsCreateFormTests(TestCase):
             'text': 'Пост пользователя на которого я подписан',
         }
         second_user_client.post(
-            '/new/',
+            c.NEW_URL,
             data=form_data,
             follow=True
         )
-        response_first = self.authorized_client.get(reverse('follow_index'))
+        response_first = self.authorized_client.get(c.FOLLOW_URL)
         self.assertEquals(
             response_first.context['posts'].first().text,
             'Пост пользователя на которого я подписан'
@@ -109,7 +108,7 @@ class PostsCreateFormTests(TestCase):
         self.assertRedirects(response_follow, c.PROFILE_URL2)
         self.assertEqual(Follow.objects.count(), follows_count + 1)
         response_unfollow = self.authorized_client.get(
-            '/second_user/unfollow/',
+            c.UNFOLLOW2,
             follow=True,
         )
         self.assertEquals(
